@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
-
-namespace RecipeBook
+﻿namespace RecipeBook
 {
+    /// <summary>
+    /// Observer pattern — subject that notifies subscribers when recipes change.
+    /// </summary>
     public class RecipeManager
     {
-        private List<ISubscriber> subscribers = new List<ISubscriber>();
+        private readonly List<ISubscriber> subscribers = new();
 
-        public void Subscriber(ISubscriber subscriber)
+        public void Subscribe(ISubscriber subscriber)
         {
-            subscribers.Add(subscriber);
+            if (!subscribers.Contains(subscriber))
+            {
+                subscribers.Add(subscriber);
+            }
         }
 
         public void Unsubscribe(ISubscriber subscriber)

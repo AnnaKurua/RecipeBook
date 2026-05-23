@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace RecipeBook
+﻿namespace RecipeBook
 {
     public interface IRecipeRepo
     {
         List<Recipe> GetAll();
-        Recipe GetById(Guid id);
+        Recipe? GetById(Guid id);
         void Save(Recipe recipe);
         void Delete(Guid id);
     }

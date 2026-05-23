@@ -1,22 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RecipeBook
+﻿namespace RecipeBook
 {
-    // Recipe.cs
     public class Recipe
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public List<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
-        public List<string> Steps { get; set; } = new List<string>();
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public List<Ingredient> Ingredients { get; set; } = new();
+        public List<string> Steps { get; set; } = new();
+        public int Servings { get; set; } = 1;
 
-        public Recipe(string title, string description)
+        public Recipe()
+        {
+        }
+
+        public Recipe(string title, string description, int servings = 1)
         {
             Title = title;
             Description = description;
+            Servings = servings > 0 ? servings : 1;
         }
 
         public void AddIngredient(Ingredient ingredient)
@@ -29,13 +30,38 @@ namespace RecipeBook
             Ingredients.RemoveAll(i => i.Id == ingredientId);
         }
 
-        public void Scale(int servings)
+        public void Scale(int targetServings)
         {
-            // Basic scaling — assumes recipe is currently for 1 serving
+            if (targetServings <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(targetServings), "Servings must be greater than zero.");
+            }
+
+            int baseServings = Servings > 0 ? Servings : 1;
+            double factor = (double)targetServings / baseServings;
+
             foreach (var ingredient in Ingredients)
             {
-                ingredient.Amount *= servings;
+                ingredient.Amount *= factor;
             }
+
+            Servings = targetServings;
+        }
+
+        public Recipe Clone()
+        {
+            var copy = new Recipe(Title, Description, Servings)
+            {
+                Id = Id,
+                Steps = new List<string>(Steps)
+            };
+
+            foreach (var ingredient in Ingredients)
+            {
+                copy.Ingredients.Add(ingredient.Clone());
+            }
+
+            return copy;
         }
     }
 }
