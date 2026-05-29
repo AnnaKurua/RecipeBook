@@ -11,13 +11,9 @@ namespace RecipeBook
         public string Description { get; set; } = string.Empty;
         public int Servings { get; private set; } = 1;
 
-        // Backing fields protect the data integrity of our lists
-        private readonly List<Ingredient> _ingredients = new();
-        private readonly List<string> _steps = new();
+        public List<Ingredient> Ingredients { get; private set; } = new();
+        public List<string> Steps { get; private set; } = new();
 
-        // Exposing lists as IReadOnlyList prevents external code from overwriting them (e.g., recipe.Ingredients = null;)
-        public IReadOnlyList<Ingredient> Ingredients => _ingredients;
-        public IReadOnlyList<string> Steps => _steps;
 
         // Parameterless constructor required for JSON deserialization/database frameworks
         public Recipe() { }
@@ -34,19 +30,19 @@ namespace RecipeBook
         public void AddIngredient(Ingredient ingredient)
         {
             if (ingredient == null) throw new ArgumentNullException(nameof(ingredient));
-            _ingredients.Add(ingredient);
+            Ingredients.Add(ingredient);
         }
 
         public void RemoveIngredient(Guid ingredientId)
         {
-            _ingredients.RemoveAll(i => i.Id == ingredientId);
+            Ingredients.RemoveAll(i => i.Id == ingredientId);
         }
 
         public void AddStep(string step)
         {
             if (!string.IsNullOrWhiteSpace(step))
             {
-                _steps.Add(step);
+                Steps.Add(step);
             }
         }
 
@@ -64,7 +60,7 @@ namespace RecipeBook
             Recipe clonedRecipe = this.Clone(createNewIds: false);
 
             double factor = (double)targetServings / (this.Servings > 0 ? this.Servings : 1);
-            foreach (var ingredient in clonedRecipe._ingredients)
+            foreach (var ingredient in clonedRecipe.Ingredients)
             {
                 ingredient.Amount *= factor;
             }
@@ -92,12 +88,12 @@ namespace RecipeBook
             };
 
             // Safely copy primitive strings into the new list container
-            copy._steps.AddRange(this._steps);
+            copy.Steps.AddRange(this.Steps);
 
             // Deep-copy each ingredient inside the recipe using its own Prototype pattern implementation
-            foreach (var ingredient in this._ingredients)
+            foreach (var ingredient in this.Ingredients)
             {
-                copy._ingredients.Add(ingredient.Clone(createNewIds));
+                copy.Ingredients.Add(ingredient.Clone(createNewIds));
             }
 
             return copy;

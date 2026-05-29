@@ -10,11 +10,9 @@ namespace RecipeBook
     /// </summary>
     public class ShoppingList : ISubscriber
     {
-        // FIX: Encapsulated the collection so external files cannot type: shoppingList.Items = null;
-        private readonly List<Ingredient> _items = new();
 
-        // Exposing it safely as a Read-Only list for UI binding or verification
-        public IReadOnlyList<Ingredient> Items => _items;
+
+        public List<Ingredient> Items { get; private set; } = new();
 
         private ISortStrategy? _sortStrategy;
 
@@ -28,24 +26,24 @@ namespace RecipeBook
             {
                 // We pass 'false' to Clone because a shopping list item needs to retain 
                 // the ID link to know which recipe components it maps back to.
-                _items.Add(ingredient.Clone(createNewId: false));
+                Items.Add(ingredient.Clone(createNewId: false));
             }
         }
 
         public void AddItem(Ingredient ingredient)
         {
             if (ingredient == null) throw new ArgumentNullException(nameof(ingredient));
-            _items.Add(ingredient);
+            Items.Add(ingredient);
         }
 
         // ── Removing ──────────────────────────────────────────────────────────
 
         public void RemoveMatching(string name, string unit) =>
-            _items.RemoveAll(i =>
+            Items.RemoveAll(i =>
                 string.Equals(i.Name, name, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(i.Unit, unit, StringComparison.OrdinalIgnoreCase));
 
-        public void Clear() => _items.Clear();
+        public void Clear() => Items.Clear();
 
         // ── Observer: react to recipe changes ─────────────────────────────────
 
@@ -90,7 +88,7 @@ namespace RecipeBook
         /// Merges duplicate name+unit rows by summing their amounts.
         /// </summary>
         public List<Ingredient> GetConsolidatedList() =>
-            _items
+            Items
                 .GroupBy(i => new { i.Name, i.Unit, i.Category })
                 .Select(g => new Ingredient(g.Key.Name, g.Sum(i => i.Amount), g.Key.Unit, g.Key.Category))
                 .ToList();
@@ -103,7 +101,7 @@ namespace RecipeBook
 
         public void Display(bool consolidated = true, bool sorted = false)
         {
-            List<Ingredient> toShow = consolidated ? GetConsolidatedList() : new List<Ingredient>(_items);
+            List<Ingredient> toShow = consolidated ? GetConsolidatedList() : new List<Ingredient>(Items);
             if (sorted && _sortStrategy != null)
                 toShow = _sortStrategy.Sort(toShow);
 
