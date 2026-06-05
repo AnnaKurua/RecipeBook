@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\99559\\source\\repos\\RecipeBook\\RecipeBook.csproj": {}
+    "C:\\Users\\LILE\\Desktop\\DataGardens\\RecipeBook.csproj": {}
   },
   "projects": {
-    "C:\\Users\\99559\\source\\repos\\RecipeBook\\RecipeBook.csproj": {
+    "C:\\Users\\LILE\\Desktop\\DataGardens\\RecipeBook.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\99559\\source\\repos\\RecipeBook\\RecipeBook.csproj",
+        "projectUniqueName": "C:\\Users\\LILE\\Desktop\\DataGardens\\RecipeBook.csproj",
         "projectName": "RecipeBook",
-        "projectPath": "C:\\Users\\99559\\source\\repos\\RecipeBook\\RecipeBook.csproj",
-        "packagesPath": "C:\\Users\\99559\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\99559\\source\\repos\\RecipeBook\\obj\\",
+        "projectPath": "C:\\Users\\LILE\\Desktop\\DataGardens\\RecipeBook.csproj",
+        "packagesPath": "C:\\Users\\LILE\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\LILE\\Desktop\\DataGardens\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\99559\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\LILE\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net10.0": {
@@ -73,7 +73,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.204/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

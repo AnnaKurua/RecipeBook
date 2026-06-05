@@ -16,6 +16,10 @@ namespace RecipeBook
         private readonly RecipeManager _recipeManager;
         private User? _currentUser;
 
+        // PATTERN: Command — history stack enables Undo
+        // FIX 1: Added a Stack to track executed commands
+        private readonly Stack<IShoppingListCommand> _commandHistory = new();
+
         public RecipeBookFacade(
             UserManagement userManagement,
             RecipeService recipeService,
@@ -44,6 +48,7 @@ namespace RecipeBook
                 Console.WriteLine("3. Manage shopping list");
                 Console.WriteLine("4. Update email");
                 Console.WriteLine("5. Switch user");
+                Console.WriteLine("6. Undo last action");
                 Console.WriteLine("0. Exit");
                 Console.Write("Choice: ");
 
@@ -54,6 +59,8 @@ namespace RecipeBook
                     case "3": ShoppingListWorkflow(); break;
                     case "4": UpdateEmailWorkflow(); break;
                     case "5": EnsureUser(); break;
+                    // FIX 2: Case "6" was completely missing — added undo logic
+                    case "6": UndoLastAction(); break;
                     case "0":
                         Console.WriteLine("Happy cooking!");
                         running = false;
@@ -65,6 +72,23 @@ namespace RecipeBook
             }
         }
 
+        // ── Undo ──────────────────────────────────────────────────────────────
+
+        // FIX 3: New method that pops and reverses the last command
+        private void UndoLastAction()
+        {
+            if (_commandHistory.Count == 0)
+            {
+                Console.WriteLine("Nothing to undo.");
+                return;
+            }
+
+            IShoppingListCommand last = _commandHistory.Pop();
+            last.Undo();
+            _userManagement.SaveUserState(_currentUser!);
+            Console.WriteLine($"Undone: {last.Description}");
+        }
+
         // ── User login / registration ─────────────────────────────────────────
 
         private bool EnsureUser()
@@ -72,6 +96,9 @@ namespace RecipeBook
             // Unsubscribe the previous user's shopping list before switching
             if (_currentUser != null)
                 _recipeManager.Unsubscribe(_currentUser.UserShopList);
+
+            // FIX 4: Clear history when switching users — old commands belong to old user
+            _commandHistory.Clear();
 
             Console.WriteLine();
             Console.WriteLine("=== USER ===");
@@ -91,7 +118,6 @@ namespace RecipeBook
                 try
                 {
                     _currentUser = _userManagement.RegisterUser(name, email);
-                    // Subscribe the new user's shopping list to recipe-change events (Observer)
                     _recipeManager.Subscribe(_currentUser.UserShopList);
                     Console.WriteLine($"Registered: {_currentUser.Name}");
                     return true;
@@ -115,7 +141,6 @@ namespace RecipeBook
                     return false;
                 }
 
-                // Subscribe this user's shopping list to recipe-change events (Observer)
                 _recipeManager.Subscribe(_currentUser.UserShopList);
                 Console.WriteLine($"Welcome back, {_currentUser.Name}!");
                 return true;
@@ -141,8 +166,8 @@ namespace RecipeBook
             {
                 try
                 {
-                    Recipe recipe = RecipeBuilder.BuildFromConsole();    // Builder
-                    _recipeService.CreateRecipe(recipe);                 // also fires Observer
+                    Recipe recipe = RecipeBuilder.BuildFromConsole();
+                    _recipeService.CreateRecipe(recipe);
                     _currentUser!.AddSavedRecipe(recipe);
                     _userManagement.SaveUserState(_currentUser);
                     selected = recipe;
@@ -197,7 +222,6 @@ namespace RecipeBook
             _currentUser!.AddSavedRecipe(chosen);
             _userManagement.SaveUserState(_currentUser);
 
-            // Offer scaling (uses Prototype internally)
             Console.Write($"Scale recipe? Enter target servings (current: {chosen.Servings}, or 0 to skip): ");
             if (int.TryParse(Console.ReadLine(), out int servings) && servings > 0)
             {
@@ -241,23 +265,27 @@ namespace RecipeBook
                 switch (Console.ReadLine()?.Trim())
                 {
                     case "1":
-                        list.SetSortStrategy(new AlphabeticalSortStrategy());   // Strategy
+                        list.SetSortStrategy(new AlphabeticalSortStrategy());
                         Console.WriteLine("Sorted by name:");
                         list.Display(consolidated: true, sorted: true);
                         break;
                     case "2":
-                        list.SetSortStrategy(new CategorySortStrategy());        // Strategy
+                        list.SetSortStrategy(new CategorySortStrategy());
                         Console.WriteLine("Sorted by category:");
                         list.Display(consolidated: true, sorted: true);
                         break;
                     case "3":
-                        RunRemoveItemCommand(list);    // Command
+                        // FIX 5: Pass _commandHistory so the command gets recorded
+                        RunRemoveItemCommand(list, _commandHistory);
                         break;
                     case "4":
-                        RunAddItemCommand(list);       // Command
+                        // FIX 5: Pass _commandHistory so the command gets recorded
+                        RunAddItemCommand(list, _commandHistory);
                         break;
                     case "5":
                         list.Clear();
+                        // Clear history too — nothing left to undo after a full clear
+                        _commandHistory.Clear();
                         Console.WriteLine("Shopping list cleared.");
                         break;
                     case "0":
@@ -272,7 +300,8 @@ namespace RecipeBook
             }
         }
 
-        private static void RunRemoveItemCommand(ShoppingList list)
+        // FIX 6: Both helpers now accept the history stack and push to it after Execute()
+        private static void RunRemoveItemCommand(ShoppingList list, Stack<IShoppingListCommand> history)
         {
             var display = list.GetConsolidatedList();
             if (display.Count == 0) { Console.WriteLine("  (empty)"); return; }
@@ -293,16 +322,18 @@ namespace RecipeBook
             Ingredient match = display[index - 1];
             IShoppingListCommand cmd = new RemoveIngredientCommand(list, match.Name, match.Unit);
             cmd.Execute();
+            history.Push(cmd); // record for undo
             Console.WriteLine(cmd.Description + " — done.");
         }
 
-        private static void RunAddItemCommand(ShoppingList list)
+        private static void RunAddItemCommand(ShoppingList list, Stack<IShoppingListCommand> history)
         {
-            Ingredient? ingredient = IngredientFactory.CreateFromConsole();   // Factory
+            Ingredient? ingredient = IngredientFactory.CreateFromConsole();
             if (ingredient == null) return;
 
             IShoppingListCommand cmd = new AddIngredientCommand(list, ingredient);
             cmd.Execute();
+            history.Push(cmd); // record for undo
             Console.WriteLine(cmd.Description + " — done.");
         }
 
