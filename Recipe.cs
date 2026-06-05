@@ -1,3 +1,4 @@
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 
@@ -6,6 +7,7 @@ namespace RecipeBook
     public class Recipe
     {
         // Properties use 'private set' so external code cannot change critical data without permission
+        [BsonId]
         public Guid Id { get; private set; } = Guid.NewGuid();
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
@@ -46,10 +48,8 @@ namespace RecipeBook
             }
         }
 
-        /// <summary>
         /// Scales ingredient amounts proportionally to the target number of servings.
         /// Uses the Prototype pattern to safely return a new modified instance without changing the original record.
-        /// </summary>
         public Recipe ScaleToNewTarget(int targetServings)
         {
             if (targetServings <= 0)
@@ -70,14 +70,14 @@ namespace RecipeBook
             return clonedRecipe;
         }
 
-        /// <summary>
+        
         /// PATTERN: Prototype
         /// Returns a deep copy of this recipe.
-        /// </summary>
-        /// <param name="createNewIds">
+        
+        
         /// If true, generates brand new GUIDs (Use when a user clicks "Save Copy" or "Duplicate").
         /// If false, retains original GUIDs (Use for temporary views like scaling or printing).
-        /// </param>
+       
         public Recipe Clone(bool createNewIds = false)
         {
             Guid targetRecipeId = createNewIds ? Guid.NewGuid() : this.Id;

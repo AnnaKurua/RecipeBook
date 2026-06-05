@@ -12,12 +12,12 @@ namespace RecipeBook
             // Everything else depends on abstractions (interfaces), following DIP.
 
             // PATTERN: Decorator — ValidatingRecipeRepository wraps JsonRecipeRepo
-            IRecipeRepo recipeRepo = new ValidatingRecipeRepository(new JsonRecipeRepo());
+            IRecipeRepo recipeRepo = new ValidatingRecipeRepository(new MongoRecipeRepo());
 
             // Seed sample data on the first run if file is fresh
             SampleDataSeeder.SeedIfEmpty(recipeRepo);
 
-            IUserRepo userRepo = new JsonUserRepo();
+            IUserRepo userRepo = new MongoUserRepo();
             RecipeManager recipeManager = new RecipeManager();   // Observer subject
             RecipeService recipeService = new RecipeService(recipeRepo, recipeManager);
             UserManagement userMgmt = new UserManagement(userRepo, recipeRepo);

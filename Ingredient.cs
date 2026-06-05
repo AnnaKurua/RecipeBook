@@ -22,14 +22,14 @@ namespace RecipeBook
             Category = category;
         }
 
-        /// <summary>
+        
         /// PATTERN: Prototype
         /// Returns a deep copy of the ingredient.
-        /// </summary>
+        
         /// <param name="createNewId">
         /// If true, generates a brand new GUID (for "Save Copy" functionality).
         /// If false, keeps the original GUID (for temporary calculations like scaling).
-        /// </param>
+        
         public Ingredient Clone(bool createNewId = false)
         {
             return new Ingredient(Name, Amount, Unit, Category)

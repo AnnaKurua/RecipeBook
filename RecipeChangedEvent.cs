@@ -2,10 +2,10 @@ namespace RecipeBook
 {
     public enum RecipeChangeKind { Created, Updated, Deleted }
 
-    /// <summary>
+    
     /// Data object carried by every Observer notification.
     /// Tells subscribers what happened and which recipe was involved.
-    /// </summary>
+    
     public class RecipeChangedEvent
     {
         public RecipeChangeKind Kind   { get; }

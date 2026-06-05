@@ -41,5 +41,9 @@ namespace RecipeBook
         public string DataDirectory { get; }
         public string UsersFile => Path.Combine(DataDirectory, "users.json");
         public string RecipesFile => Path.Combine(DataDirectory, "recipes.json");
+
+
+        public string MongoConnectionString => "mongodb://localhost:27017";
+        public string MongoDatabaseName => "RecipeBook";
     }
 }
