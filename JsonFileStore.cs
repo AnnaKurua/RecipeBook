@@ -11,7 +11,7 @@ namespace RecipeBook
         {
             WriteIndented = true,
             PropertyNameCaseInsensitive = true,
-            IncludeFields = true // FIX: Ensures System.Text.Json can serialize/deserialize private fields safely
+            IncludeFields = true 
         };
 
         public static List<T> LoadList<T>(string filePath)

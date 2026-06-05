@@ -10,7 +10,7 @@ namespace RecipeBook
             // ── Composition root ────────────────────────────────────────────────────────
             // This is the only place where concrete classes are instantiated.
             // Everything else depends on abstractions (interfaces), following DIP.
-
+            MongoConfig.Configure(); // must run before any MongoDB operation
             // PATTERN: Decorator — ValidatingRecipeRepository wraps JsonRecipeRepo
             IRecipeRepo recipeRepo = new ValidatingRecipeRepository(new MongoRecipeRepo());
 

@@ -1,6 +1,7 @@
 namespace RecipeBook
 {
-    /// <summary>Repository abstraction for recipes.</summary>
+    // Defines the required data operations for recipes
+    // Any class that stores/retrieves recipes must implement this;
     public interface IRecipeRepo
     {
         List<Recipe> GetAll();
@@ -9,7 +10,8 @@ namespace RecipeBook
         void         Delete(Guid id);
     }
 
-    /// <summary>Repository abstraction for users.</summary>
+    // Defines the required data operations for users
+    // Any class that stores/retrieves users must implement this;
     public interface IUserRepo
     {
         User?      GetUser(Guid id);
