@@ -1,21 +1,42 @@
-# Ignore compiler outputs
+# Build results
 [Bb]in/
-[Ob]j/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
 
-# Visual Studio cache and settings
+# Visual Studio
 .vs/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
-*.obj
 
-# Visual Studio 2015/2017/2019/2022 cache directories
+# Rider / ReSharper
+.idea/
+_ReSharper*/
+*.DotSettings.user
+
+# Generated files
 Generated Files/
-Ankh.NoLoad
 
-# Build results
-[Dd]ebug/
-[Rr]elease/
-x64/
-x86/
+# Test results
+TestResults/
+
+# Logs
+*.log
+
+# NuGet packages (if packages are not committed)
+packages/
+
+# Publish output
+publish/
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+
+# Misc
+*.cache
