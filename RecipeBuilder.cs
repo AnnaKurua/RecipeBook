@@ -12,12 +12,14 @@ namespace RecipeBook
     {
         private string _title = string.Empty;
         private string _description = string.Empty;
+        private string _category = string.Empty;
         private int _servings = 1;
         private readonly List<Ingredient> _ingredients = new();
         private readonly List<string> _steps = new();
 
         public RecipeBuilder WithTitle(string value) { _title = value ?? string.Empty; return this; }
         public RecipeBuilder WithDescription(string value) { _description = value ?? string.Empty; return this; }
+        public RecipeBuilder WithCategory(string value) { _category = value ?? string.Empty; return this; }
         public RecipeBuilder WithServings(int value) { _servings = value > 0 ? value : 1; return this; }
 
         public RecipeBuilder AddIngredient(Ingredient ingredient)
@@ -40,7 +42,10 @@ namespace RecipeBook
 
         public Recipe Build()
         {
-            var recipe = new Recipe(_title, _description, _servings);
+            var recipe = new Recipe(_title, _description, _servings)
+            {
+                Category = _category
+            };
 
             // FIX: Using formal domain methods instead of breaking encapsulation via .AddRange
             foreach (var ingredient in _ingredients)

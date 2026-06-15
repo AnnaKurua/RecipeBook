@@ -354,6 +354,8 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
 .empty { padding: 64px 24px; text-align: center; }
 .empty-icon { display: flex; justify-content: center; margin-bottom: 14px; }
 .empty-msg { font-weight: 600; font-size: 12px; color: var(--muted); text-transform: uppercase; }
+.user-pill { font-size: 13px; font-weight: 600; color: var(--text2); margin-right: 8px; }
+.auth-hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
 .toast { position: fixed; bottom: 22px; right: 22px; background: linear-gradient(180deg, #34d399 0%, #10b981 100%); color: #fff; font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: var(--r); z-index: 300; opacity: 0; transform: translateY(10px); transition: all 0.2s; pointer-events: none; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
 .toast.on { opacity: 1; transform: translateY(0); }
 </style>
@@ -377,6 +379,8 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
       <button class="nav-btn" id="tab-shopping" onclick="switchTab('shopping')">Shopping list <span class="nav-badge" id="badge"></span></button>
     </nav>
     <div class="header-right">
+      <span class="user-pill" id="user-label"></span>
+      <button class="btn btn-ghost btn-sm" id="logout-btn" onclick="logout()" style="display:none">Logout</button>
       <button class="btn btn-primary btn-sm" id="new-btn" onclick="openModal()">New Recipe</button>
     </div>
   </header>
@@ -445,6 +449,22 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
   </div>
 </div>
 
+<div class="overlay on" id="auth-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-head"><div class="modal-title">Sign in to RecipeBook</div></div>
+    <div class="modal-body">
+      <div class="field"><label class="field-label">Name (register only)</label><input class="field-input" id="auth-name" placeholder="Your name" /></div>
+      <div class="field"><label class="field-label">Email *</label><input class="field-input" id="auth-email" type="email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')login()" /></div>
+      <p class="auth-hint">Same as the console app: login with email only. New users must register first.</p>
+      <p id="auth-error" style="color:#dc2626;font-size:12px;margin-top:8px;display:none"></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="register()">Register</button>
+      <button class="btn btn-primary" onclick="login()">Login</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-head"><div class="modal-title">New Recipe</div><button class="modal-close" onclick="closeModal()">✕</button></div>
@@ -470,6 +490,87 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
 <script>
 const API = 'http://localhost:5042';
 let recipes = [], shopping = [], filterStr = '', sortMode = 'alpha', uid = 1;
+let currentUser = null;
+
+function authHeaders(extra = {}) {
+  const h = { ...extra };
+  if (currentUser) h['X-User-Id'] = currentUser.id;
+  return h;
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+
+function showApp() {
+  document.getElementById('auth-overlay').classList.remove('on');
+  document.getElementById('user-label').textContent = currentUser.name;
+  document.getElementById('logout-btn').style.display = '';
+  loadRecipes();
+}
+
+function logout() {
+  currentUser = null;
+  sessionStorage.removeItem('user');
+  shopping = [];
+  document.getElementById('auth-overlay').classList.add('on');
+  document.getElementById('user-label').textContent = '';
+  document.getElementById('logout-btn').style.display = 'none';
+  document.getElementById('auth-name').value = '';
+  document.getElementById('auth-email').value = '';
+  showAuthError('');
+}
+
+async function login() {
+  const email = document.getElementById('auth-email').value.trim();
+  if (!email) { showAuthError('Email is required.'); return; }
+  try {
+    const r = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if (!r.ok) { showAuthError('No account with that email. Register first.'); return; }
+    currentUser = await r.json();
+    sessionStorage.setItem('user', JSON.stringify(currentUser));
+    showAuthError('');
+    showApp();
+    toast('Welcome back, ' + currentUser.name);
+  } catch {
+    showAuthError('Could not reach the server.');
+  }
+}
+
+async function register() {
+  const name = document.getElementById('auth-name').value.trim();
+  const email = document.getElementById('auth-email').value.trim();
+  if (!name || !email) { showAuthError('Name and email are required.'); return; }
+  try {
+    const r = await fetch(`${API}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email })
+    });
+    const data = await r.json();
+    if (!r.ok) { showAuthError(data.error || 'Registration failed.'); return; }
+    currentUser = data;
+    sessionStorage.setItem('user', JSON.stringify(currentUser));
+    showAuthError('');
+    showApp();
+    toast('Account created');
+  } catch {
+    showAuthError('Could not reach the server.');
+  }
+}
+
+const savedUser = sessionStorage.getItem('user');
+if (savedUser) {
+  currentUser = JSON.parse(savedUser);
+  document.getElementById('auth-overlay').classList.remove('on');
+  showApp();
+}
 
 const SQUIGGLE = `<svg class="detail-squiggle" width="120" height="12" viewBox="0 0 120 12" fill="none"><path d="M2 6 Q 12 0, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6" stroke="var(--pink)" stroke-width="2.5" stroke-linecap="round"/></svg>`;
 
@@ -485,7 +586,7 @@ async function loadRecipes() {
 // Load shopping list from API
 async function loadShopping() {
   try {
-    const r = await fetch(`${API}/shopping`); const raw = await r.json();
+    const r = await fetch(`${API}/shopping`, { headers: authHeaders() }); const raw = await r.json();
     shopping = raw.map((i, idx) => ({ ...i, _uid: uid + idx, done: false })); uid += raw.length; renderShopping();
   } catch {}
 }
@@ -536,7 +637,7 @@ function openDetailPage(id) {
   const r = recipes.find(x => x.id === id); if (!r) return;
   
   document.getElementById('detail-add-btn').onclick = async () => { 
-    await fetch(`${API}/shopping/add-recipe/${r.id}`, { method: 'POST' }); toast('Ingredients added to list'); 
+    await fetch(`${API}/shopping/add-recipe/${r.id}`, { method: 'POST', headers: authHeaders() }); toast('Ingredients added to list'); 
   };
   document.getElementById('detail-del-btn').onclick = async () => {
     if (!confirm(`Delete "${r.title}"?`)) return;
@@ -592,19 +693,19 @@ function renderShopping() {
 function toggleItem(id) { const i=shopping.find(x=>x._uid===id); if(i) i.done=!i.done; renderShopping(); }
 function removeItem(id) {
   const i=shopping.find(x=>x._uid===id); if(!i) return;
-  fetch(`${API}/shopping/remove?name=${encodeURIComponent(i.name)}&unit=${encodeURIComponent(i.unit||'')}`,{method:'DELETE'});
+  fetch(`${API}/shopping/remove?name=${encodeURIComponent(i.name)}&unit=${encodeURIComponent(i.unit||'')}`,{method:'DELETE', headers: authHeaders()});
   shopping=shopping.filter(x=>x._uid!==id); updateBadge(); renderShopping();
 }
 function clearDone() {
-  shopping.filter(i=>i.done).forEach(i=>fetch(`${API}/shopping/remove?name=${encodeURIComponent(i.name)}&unit=${encodeURIComponent(i.unit||'')}`,{method:'DELETE'}));
+  shopping.filter(i=>i.done).forEach(i=>fetch(`${API}/shopping/remove?name=${encodeURIComponent(i.name)}&unit=${encodeURIComponent(i.unit||'')}`,{method:'DELETE', headers: authHeaders()}));
   shopping=shopping.filter(i=>!i.done); updateBadge(); renderShopping();
 }
-function clearAll() { fetch(`${API}/shopping/clear`,{method:'DELETE'}); shopping=[]; updateBadge(); renderShopping(); }
+function clearAll() { fetch(`${API}/shopping/clear`,{method:'DELETE', headers: authHeaders()}); shopping=[]; updateBadge(); renderShopping(); }
 function addManual() {
   const name=document.getElementById('ni-name').value.trim(); const qty=document.getElementById('ni-qty').value.trim(); if(!name) return;
   const parts=qty.split(new RegExp('\\s+')); const amount=parseFloat(parts[0])||1; const unit=parts.slice(1).join(' ')||'pcs';
   const ing={name,amount,unit,category:'General'};
-  fetch(`${API}/shopping/add-item`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ing)});
+  fetch(`${API}/shopping/add-item`,{method:'POST',headers:authHeaders({'Content-Type':'application/json'}),body:JSON.stringify(ing)});
   shopping.push({...ing,_uid:uid++,done:false}); document.getElementById('ni-name').value=''; document.getElementById('ni-qty').value=''; renderShopping();
 }
 function updateBadge() { const b=document.getElementById('badge'); if(shopping.length){b.textContent=shopping.length;b.classList.add('show');}else b.classList.remove('show'); }
@@ -657,8 +758,6 @@ function initWorkspaceDraggable(element, dragHandle) {
 
   function closeDragElement() { document.onmouseup = null; document.onmousemove = null; }
 }
-
-loadRecipes();
 </script>
 </body>
 </html>

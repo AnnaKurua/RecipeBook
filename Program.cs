@@ -7,22 +7,23 @@ namespace RecipeBook
     {
         static void Main(string[] args)
         {
-            // ── Composition root ────────────────────────────────────────────────────────
-            // This is the only place where concrete classes are instantiated.
-            // Everything else depends on abstractions (interfaces), following DIP.
-            MongoConfig.Configure(); // must run before any MongoDB operation
-            // PATTERN: Decorator — ValidatingRecipeRepository wraps JsonRecipeRepo
-            IRecipeRepo recipeRepo = new ValidatingRecipeRepository(new MongoRecipeRepo());
+            if (args.Contains("--console"))
+                RunConsoleApp();
+            else
+                WebApiHost.Run(args);
+        }
 
-            // Seed sample data on the first run if file is fresh
+        static void RunConsoleApp()
+        {
+            MongoConfig.Configure();
+            IRecipeRepo recipeRepo = new ValidatingRecipeRepository(new MongoRecipeRepo());
             SampleDataSeeder.SeedIfEmpty(recipeRepo);
 
             IUserRepo userRepo = new MongoUserRepo();
-            RecipeManager recipeManager = new RecipeManager();   // Observer subject
+            RecipeManager recipeManager = new RecipeManager();
             RecipeService recipeService = new RecipeService(recipeRepo, recipeManager);
             UserManagement userMgmt = new UserManagement(userRepo, recipeRepo);
 
-            // PATTERN: Facade — single Run() drives the whole application
             var app = new RecipeBookFacade(userMgmt, recipeService, recipeManager);
             app.Run();
         }

@@ -11,6 +11,7 @@ namespace RecipeBook
         public Guid Id { get; private set; } = Guid.NewGuid();
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
         public int Servings { get; private set; } = 1;
 
         public List<Ingredient> Ingredients { get; private set; } = new();
@@ -84,7 +85,8 @@ namespace RecipeBook
 
             var copy = new Recipe(Title, Description, Servings)
             {
-                Id = targetRecipeId
+                Id = targetRecipeId,
+                Category = Category
             };
 
             // Safely copy primitive strings into the new list container

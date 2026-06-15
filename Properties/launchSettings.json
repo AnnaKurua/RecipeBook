@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "RecipeBook": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "",
+      "applicationUrl": "http://localhost:5042",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "RecipeBook (Console)": {
+      "commandName": "Project",
+      "commandLineArgs": "--console",
+      "launchBrowser": false
+    }
+  }
+}
