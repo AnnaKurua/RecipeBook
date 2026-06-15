@@ -16,9 +16,9 @@
   --border:    rgba(255, 255, 255, 0.5);
   --border2:   rgba(14, 165, 233, 0.25);
 
-  --pink:      #0ea5e9;       
+  --pink:      #0ea5e9;
   --pink-lt:   #38bdf8;
-  --orange:    #10b981;      
+  --orange:    #10b981;
   --orange-lt: #059669;
   --yellow:    #0284c7;
   --cyan:      #06b6d4;
@@ -52,7 +52,7 @@ html, body {
   overflow: hidden;
 }
 
-/* ───────────────────── FRUTIGER BACKDROP FLOORS ───────────────────── */
+/* Background */
 .horizon {
   position: fixed;
   inset: 0;
@@ -88,9 +88,7 @@ html, body {
   filter: blur(20px);
 }
 
-.grain {
-  display: none; 
-}
+.grain { display: none; }
 
 .shell {
   position: relative;
@@ -100,7 +98,7 @@ html, body {
   height: 100vh;
 }
 
-/* HEADER */
+/* Header */
 header {
   display: flex;
   align-items: stretch;
@@ -148,7 +146,7 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
 .nav-badge.show { display: inline; }
 .header-right { display: flex; align-items: center; padding: 0 18px; border-left: 1px solid rgba(14, 165, 233, 0.15); margin-left: auto; }
 
-/* GLOBALS */
+/* Buttons */
 .btn {
   font-family: var(--head); font-weight: 600; font-size: 13px;
   border: 1px solid rgba(0,0,0,0.12); border-radius: 20px; padding: 6px 18px;
@@ -176,7 +174,7 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
 ::-webkit-scrollbar-thumb { background: rgba(14,165,233,0.2); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(14,165,233,0.4); }
 
-/* TOOLBAR */
+/* Toolbar */
 .toolbar {
   display: flex; align-items: center; gap: 10px; padding: 12px 24px;
   background: rgba(255, 255, 255, 0.4); border-bottom: 1px solid rgba(14, 165, 233, 0.15);
@@ -195,7 +193,7 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
 }
 .sort-btn.on { background: rgba(255,255,255,0.9); border-color: var(--pink); color: #0284c7; box-shadow: 0 2px 6px rgba(14,165,233,0.15); }
 
-/* RECIPE CATALOG GRID */
+/* Recipe grid */
 .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; padding: 24px; }
 .recipe-card { 
   background: rgba(255, 255, 255, 0.5); 
@@ -223,7 +221,7 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
 .card-stat-n { font-weight: 700; font-size: 20px; color: #0284c7; }
 .card-stat-l { font-size: 10px; color: var(--muted); text-transform: uppercase; display: block; font-weight: 600; }
 
-/* ───────────────────── DETAIL PAGE ARCHITECTURE ───────────────────── */
+/* Detail view */
 .detail-view-container {
   display: grid;
   grid-template-columns: 1fr;
@@ -232,27 +230,23 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
   width: 100%;
 }
 
-/* Locked Static Side Container (Instructions Page Half) */
 .detail-locked-main-pane {
-  padding: 30px 40px 30px 480px; /* Indent generous space for the sidebar block */
+  padding: 30px 40px 30px 480px;
   overflow-y: auto;
   height: calc(100vh - 54px);
 }
 
-/* Movable + Resizable Workspace Block with explicit sizing safety bounds */
+/* Draggable sidebar panel */
 .movable-recipe-workspace-block {
   position: absolute;
   top: 30px;
   left: 30px;
   width: 420px;
   height: 75vh;
-  
-  /* SIZING SAFETY LIMITS */
   min-width: 340px;
   max-width: 600px;
   min-height: 280px;
   max-height: calc(100vh - 100px);
-
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--border);
   border-radius: var(--r2);
@@ -262,7 +256,6 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
   display: flex;
   flex-direction: column;
   z-index: 20;
-  
   resize: both;
   overflow: hidden;
 }
@@ -320,7 +313,7 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
 .step-n { font-weight: 700; font-size: 18px; color: var(--orange); width: 32px; }
 .step-t { font-size: 13.5px; color: var(--text2); line-height: 1.7; }
 
-/* SHOPPING */
+/* Shopping list */
 .shop-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: rgba(255, 255, 255, 0.4); border-bottom: 1px solid rgba(14, 165, 233, 0.15); position: sticky; top: 0; z-index: 5; }
 .shop-count { font-weight: 700; font-size: 16px; color: var(--text); }
 .add-bar { display: flex; align-items: center; gap: 10px; padding: 12px 24px; border-bottom: 1px solid rgba(14, 165, 233, 0.15); background: rgba(255,255,255,0.25); }
@@ -340,7 +333,7 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
 .si-del { background: none; border: none; color: var(--dim); font-size: 14px; cursor: pointer; transition: color 0.15s; }
 .si-del:hover { color: #dc2626; }
 
-/* FORM MODAL */
+/* Modal */
 .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.25); backdrop-filter: blur(8px); z-index: 100; display: none; justify-content: flex-end; }
 .overlay.on { display: flex; }
 .modal { width: 460px; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: rgba(255,255,255,0.9); border-left: 1px solid var(--border); position: relative; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: -4px 0 24px rgba(0,0,0,0.08); }
@@ -366,14 +359,6 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
 </style>
 </head>
 <body>
-
-<svg width="0" height="0" style="position:absolute">
-  <filter id="grainFilter">
-    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" result="noise"/>
-    <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
-  </filter>
-</svg>
-<div class="grain"></div>
 
 <div class="horizon">
   <div class="horizon-glow"></div>
@@ -423,8 +408,7 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
             </div>
             <button class="modal-close" style="height:20px; width:20px; font-size:10px;" onclick="switchTab('recipes')">✕</button>
           </div>
-          <div class="workspace-scrollable-content" id="detail-sidebar-content">
-            </div>
+          <div class="workspace-scrollable-content" id="detail-sidebar-content"></div>
         </div>
 
         <div class="detail-locked-main-pane">
@@ -436,8 +420,7 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
               <button class="btn btn-ghost btn-sm" onclick="switchTab('recipes')">← Back Catalog</button>
             </div>
           </div>
-          <div id="detail-instructions-content">
-            </div>
+          <div id="detail-instructions-content"></div>
         </div>
 
       </div>
@@ -488,9 +471,9 @@ nav { display: flex; align-items: center; padding: 0 8px; gap: 4px; flex: 1; }
 const API = 'http://localhost:5042';
 let recipes = [], shopping = [], filterStr = '', sortMode = 'alpha', uid = 1;
 
-/* Updated style pattern for the separator path */
 const SQUIGGLE = `<svg class="detail-squiggle" width="120" height="12" viewBox="0 0 120 12" fill="none"><path d="M2 6 Q 12 0, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6" stroke="var(--pink)" stroke-width="2.5" stroke-linecap="round"/></svg>`;
 
+// Load all recipes from API
 async function loadRecipes() {
   try {
     const r = await fetch(`${API}/recipes`); recipes = await r.json(); renderList();
@@ -499,6 +482,7 @@ async function loadRecipes() {
   }
 }
 
+// Load shopping list from API
 async function loadShopping() {
   try {
     const r = await fetch(`${API}/shopping`); const raw = await r.json();
@@ -506,6 +490,7 @@ async function loadShopping() {
   } catch {}
 }
 
+// Tab switching
 function switchTab(tab) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
@@ -523,6 +508,7 @@ function switchTab(tab) {
   document.getElementById('new-btn').style.display = tab === 'recipes' ? '' : 'none';
 }
 
+// Render recipe cards
 function renderList() {
   let list = [...recipes];
   if (filterStr) list = list.filter(r => r.title.toLowerCase().includes(filterStr) || (r.description||'').toLowerCase().includes(filterStr));
@@ -545,11 +531,12 @@ function renderList() {
     </div>`).join('');
 }
 
+// Open recipe detail page
 function openDetailPage(id) {
   const r = recipes.find(x => x.id === id); if (!r) return;
   
   document.getElementById('detail-add-btn').onclick = async () => { 
-    await fetch(`${API}/shopping/add-recipe/${r.id}`, { method: 'POST' }); toast('Ingredients added to layout'); 
+    await fetch(`${API}/shopping/add-recipe/${r.id}`, { method: 'POST' }); toast('Ingredients added to list'); 
   };
   document.getElementById('detail-del-btn').onclick = async () => {
     if (!confirm(`Delete "${r.title}"?`)) return;
@@ -575,7 +562,6 @@ function openDetailPage(id) {
       ${(r.steps||[]).map((s,i)=>`<li class="step-item"><span class="step-n">0${i+1}</span><span class="step-t">${esc(s)}</span></li>`).join('')}
     </ol>`;
 
-  // Reset module sizing to balanced default states
   const workspace = document.getElementById('recipe-movable-sidebar');
   workspace.style.top = "30px";
   workspace.style.left = "30px";
@@ -589,6 +575,7 @@ function openDetailPage(id) {
 function filterRecipes(v) { filterStr = v.toLowerCase(); renderList(); }
 function setSort(mode, btn) { sortMode = mode; document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('on')); btn.classList.add('on'); renderList(); }
 
+// Render shopping list
 function renderShopping() {
   const total = shopping.length; document.getElementById('shop-count').textContent = `${total} Item${total!==1?'s':''}`; updateBadge();
   const el = document.getElementById('shop-list');
@@ -637,7 +624,7 @@ async function saveRecipe() {
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600);}
 
-// ── DRAG ENGINE ─────────────────────────────────────────────────────────────
+// Drag handler for the sidebar panel
 function initWorkspaceDraggable(element, dragHandle) {
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   dragHandle.onmousedown = dragMouseDown;
@@ -658,7 +645,7 @@ function initWorkspaceDraggable(element, dragHandle) {
     let newTop = element.offsetTop - pos2;
     let newLeft = element.offsetLeft - pos1;
 
-    // Boundary rules clamping to workspace window viewports
+    // Keep panel within viewport
     if (newTop < 10) newTop = 10;
     if (newLeft < 10) newLeft = 10;
     if (newTop > window.innerHeight - 120) newTop = window.innerHeight - 120;
